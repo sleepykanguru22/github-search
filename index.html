@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+        <style>
+            .grid-container {
+                display: grid;
+                grid-template-columns: repeat(4, 1fr);
+                grid-template-rows: repeat(4, 1fr);
+                grid-gap: 10px;
+                margin-top: 20px;
+            }
+    
+            .grid-item {
+                padding: 10px;
+                background-color: #f2f2f2;
+                border: 1px solid #ddd;
+                border-radius: 5px;
+                display: flex;
+                flex-direction: column;
+                align-items: center;
+                justify-content: center;
+                text-align: center;
+            }
+    
+            .grid-item img {
+                max-width: 100%;
+                height: auto;
+                display: block;
+                margin-bottom: 10px;
+            }
+    
+            @media (max-width: 768px) {
+                .grid-container {
+                    grid-template-columns: 1fr;
+                    grid-template-rows: auto;
+                }
+            }
+        </style>
+    </head>
+    
+    <body>
+        <h1>GitHub User Search</h1>
+        <form>
+            <label for="username">Enter GitHub username:</label>
+            <input type="text" id="username" name="username">
+            <button type="button" onclick="searchUser()">Search</button>
+        </form>
+        <div id="result" class="grid-container"></div>
+        <script>
+            function searchUser() {
+                const username = document.getElementById("username").value;
+                const url = `https://api.github.com/users/${username}`;
+                fetch(url)
+                    .then(response => response.json())
+                    .then(data => {
+                        const result = document.getElementById("result");
+                        const joinedDate = new Date(data.created_at);
+                        const formattedDate = `${joinedDate.toLocaleString('default', { month: 'short' }).substr(0, 3)} ${joinedDate.getDate()}, ${joinedDate.getFullYear()}`;
+                        result.innerHTML = `<div class="grid-item">
+    											<h2>${data.login}</h2>
+    											<img src="${data.avatar_url}" alt="Profile Picture">
+    											<p>Name: ${data.name}</p>
+    											<p>Location: ${data.location}</p>
+    											<p>Joined: ${formattedDate}</p>
+    											<p>Followers: ${data.followers}</p>
+    											<p>Following: ${data.following}</p>
+    										</div>`;
+                    })
+                    .catch(error => console.error(error));
+            }
+        </script>
+</body>
+</html>
